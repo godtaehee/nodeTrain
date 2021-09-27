@@ -1,38 +1,42 @@
-const crypto = require('crypto');
+const EventEmitter = require('events');
 
-const pass = 'pass';
-const salt = 'salt';
+const myEvent = new EventEmitter();
 
-const start = Date.now();
-
-crypto.pbkdf2(pass, salt, 1000000, 128, 'sha512', () => {
-  console.log('1: ', Date.now() - start);
+myEvent.addListener('event1', () => {
+  console.log('이벤트 1');
 });
 
-crypto.pbkdf2(pass, salt, 1000000, 128, 'sha512', () => {
-  console.log('2: ', Date.now() - start);
+myEvent.on('event2', () => {
+  console.log('이벤트 2');
 });
 
-crypto.pbkdf2(pass, salt, 1000000, 128, 'sha512', () => {
-  console.log('3: ', Date.now() - start);
+myEvent.on('event2', () => {
+  console.log('이벤트 2 추가');
 });
 
-crypto.pbkdf2(pass, salt, 1000000, 128, 'sha512', () => {
-  console.log('4: ', Date.now() - start);
+myEvent.once('event3', () => {
+  console.log('이벤트 3');
 });
 
-crypto.pbkdf2(pass, salt, 1000000, 128, 'sha512', () => {
-  console.log('5: ', Date.now() - start);
+myEvent.emit('event1');
+myEvent.emit('event2');
+myEvent.emit('event3');
+myEvent.emit('event3');
+
+myEvent.on('event4', () => {
+  console.log('이벤트 4');
 });
 
-crypto.pbkdf2(pass, salt, 1000000, 128, 'sha512', () => {
-  console.log('6: ', Date.now() - start);
-});
+myEvent.removeAllListeners('event4');
+myEvent.emit('event4');
 
-crypto.pbkdf2(pass, salt, 1000000, 128, 'sha512', () => {
-  console.log('7: ', Date.now() - start);
-});
+const listener = () => {
+  console.log('이벤트 5');
+};
 
-crypto.pbkdf2(pass, salt, 1000000, 128, 'sha512', () => {
-  console.log('8: ', Date.now() - start);
-});
+myEvent.on('event5', listener);
+
+myEvent.removeListener('event5', listener);
+myEvent.emit('event5');
+
+console.log(myEvent.listenerCount('event2'));
