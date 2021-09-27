@@ -1,42 +1,12 @@
-const EventEmitter = require('events');
-
-const myEvent = new EventEmitter();
-
-myEvent.addListener('event1', () => {
-  console.log('이벤트 1');
+// 에러를 해결하려 들지말고 그냥 process.exit로 프로세스를 끝내버리자.
+process.on('uncaughtException', (err) => {
+  console.error('예기치 못한 에러', err);
 });
 
-myEvent.on('event2', () => {
-  console.log('이벤트 2');
-});
+setInterval(() => {
+  throw new Error('서버를 고장내주마!');
+}, 1000);
 
-myEvent.on('event2', () => {
-  console.log('이벤트 2 추가');
-});
-
-myEvent.once('event3', () => {
-  console.log('이벤트 3');
-});
-
-myEvent.emit('event1');
-myEvent.emit('event2');
-myEvent.emit('event3');
-myEvent.emit('event3');
-
-myEvent.on('event4', () => {
-  console.log('이벤트 4');
-});
-
-myEvent.removeAllListeners('event4');
-myEvent.emit('event4');
-
-const listener = () => {
-  console.log('이벤트 5');
-};
-
-myEvent.on('event5', listener);
-
-myEvent.removeListener('event5', listener);
-myEvent.emit('event5');
-
-console.log(myEvent.listenerCount('event2'));
+setTimeout(() => {
+  console.log('실행됩니다.');
+}, 2000);
