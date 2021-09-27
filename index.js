@@ -1,23 +1,26 @@
-const {Worker, isMainThread, parentPort, workerData } = require('worker_threads');
+const min = 2;
+const max = 10000000;
+const primes = [];
 
-if (isMainThread) {
-  const threads = new Set();
-  threads.add(new Worker(__filename, {
-    workerData: { start: 1}
-  }));
-  threads.add(new Worker(__filename, {
-    workerData: { start: 2}
-  }));
-
-  for (let worker of threads) {
-    worker.on('message', (value) => console.log('워커로부터', value));
-    worker.on('exit', () => {
-      threads.delete(worker);
-      if (threads.size === 0) {
-        console.log('워커 끝')
+function generatePrimes(start, range) {
+  let isPrime = true;
+  const end = start + range;
+  for (let i = start; i < end; i++) {
+    for (let j = min; j < Math.sqrt(end); j++) {
+      if (i !== j && i % j === 0) {
+        isPrime = false;
+        break;
       }
-    });
+    }
+    if (isPrime) {
+      primes.push(i);
+    }
+    isPrime = true;
   }
-}else {
-  parentPort.postMessage(workerData.start + 100);
 }
+
+console.time('prime');
+generatePrimes(min, max);
+console.timeEnd('prime');
+
+console.log(primes.length);
