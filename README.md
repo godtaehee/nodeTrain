@@ -27,3 +27,11 @@
 - 3306: MYSQL
 
 리눅스에서는 1024번 이하의 포트에 연결할 때 관리자 권한이 필요하므로 sudo를 붙여야한다.
+
+## npm -g 기본경로 
+
+### 윈도우
+- C:\Users\사용자이름\AppData\Roaming\npm 
+
+### Mac
+- /usr/local/lib/node_modules
