@@ -1,21 +1,10 @@
 const fs = require('fs');
 
-// 버퍼의 크기를 highWaterMark를 통해 설정
-// 기본값은 64KB
-// 지금은 16B
-const readStream = fs.createReadStream('./readme.txt', { highWaterMark: 16 });
-
-const data = [];
-
-readStream.on('data', (chunk) => {
-  data.push(chunk);
-  console.log('data: ', chunk, chunk.length);
+const writeStream = fs.createWriteStream('./writeme2.txt');
+writeStream.on('finish', () => {
+  console.log('파일 쓰기 완료');
 });
 
-readStream.on('end', () => {
-  console.log('end: ', Buffer.concat(data).toString());
-});
-
-readStream.on('error', (err) => {
-  console.log('error: ', err);
-});
+writeStream.write('이 글을 씁니다 \n');
+writeStream.write('한 번 더 씁니다.');
+writeStream.end();
