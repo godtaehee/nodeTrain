@@ -1,26 +1,21 @@
-// Buffer.from을 통해 버퍼로 바꾼다.
-const buffer = Buffer.from('저르 버퍼로 바꿔보세요');
-// 버퍼로 바꾼결과
-console.log('from() ', buffer);
+const fs = require('fs');
 
-// 버퍼 길이
-console.log('length: ', buffer.length);
+// 버퍼의 크기를 highWaterMark를 통해 설정
+// 기본값은 64KB
+// 지금은 16B
+const readStream = fs.createReadStream('./readme.txt', { highWaterMark: 16 });
 
-// 버퍼를 다시 문자열로
-console.log('toString(): ', buffer.toString());
+const data = [];
 
-const array = [
-  Buffer.from('띠엄 '),
-  Buffer.from('띄엄 '),
-  Buffer.from('띄어쓰기'),
-];
+readStream.on('data', (chunk) => {
+  data.push(chunk);
+  console.log('data: ', chunk, chunk.length);
+});
 
-// 배열에 담긴 버퍼를 연결
-const buffer2 = Buffer.concat(array);
+readStream.on('end', () => {
+  console.log('end: ', Buffer.concat(data).toString());
+});
 
-// 연결한걸 다시 스트링으로
-console.log('concat(): ', buffer2.toString());
-
-// 버퍼 5개 할당
-const buffer3 = Buffer.alloc(5);
-console.log('alloc(): ', buffer3);
+readStream.on('error', (err) => {
+  console.log('error: ', err);
+});
