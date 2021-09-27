@@ -1,12 +1,28 @@
-const fs = require('fs').promises;
+const fs = require('fs');
 
-fs.writeFile('./hello.js', '코드가 작성됩니다.')
-  .then(() => {
-    return fs.readFile('./hello.js');
-  })
-  .then((data) => {
-    console.log(data.toString());
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+console.log('시작');
+fs.readFile('./readme.txt', (err, data) => {
+  if (err) {
+    throw err;
+  }
+  console.log('1번');
+  console.log(data.toString());
+});
+
+fs.readFile('./readme.txt', (err, data) => {
+  if (err) {
+    throw err;
+  }
+  console.log('2번');
+  console.log(data.toString());
+});
+
+fs.readFile('./readme.txt', (err, data) => {
+  if (err) {
+    throw err;
+  }
+  console.log('3번');
+  console.log(data.toString());
+});
+
+console.log('끝');
