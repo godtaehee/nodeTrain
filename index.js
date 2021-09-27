@@ -1,10 +1,12 @@
 const fs = require('fs').promises;
 
-fs.readFile('./readme.txt')
+fs.writeFile('./hello.js', '코드가 작성됩니다.')
+  .then(() => {
+    return fs.readFile('./hello.js');
+  })
   .then((data) => {
-    console.log(data);
     console.log(data.toString());
   })
   .catch((err) => {
-    console.error(err);
+    console.log(err);
   });
