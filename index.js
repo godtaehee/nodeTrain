@@ -1,12 +1,14 @@
-const http = require('http');
+const {Worker, isMainThread, parentPort} = require('worker_threads');
 
-const server = http.createServer((req, res) => {
-    res.write('<h1>Hi world</h1>');
-    res.write('<h1>Hi wossssssrld</h1>');
-    res.end('<p>gogogogo</p>');
-});
-
-
-server.listen('8080', () => {
-    console.log('http://localhost:8080');
-})
+if (isMainThread) {
+  const worker = new Worker(__filename);
+  worker.on('message', (value) => console.log('워커로부터', value));
+  worker.on('exit', () => console.log('워커 끝'));
+  worker.postMessage('ping');
+}else {
+  parentPort.on('message', (value) => {
+    console.log('부모로부터', value);
+    parentPort.postMessage('pong');
+    parentPort.close();
+  })
+}
