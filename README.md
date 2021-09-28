@@ -367,3 +367,5 @@ module.exports = db;
 ```
 
 여기에서 `Sequelize`는 시퀄라이즈 패키지이자 생성자이다. config/config.json에서 데이터베이스 설정을 불러온 후 new Sequelize를 통해 MySQL 연결 객체를 생성한다. 연결 객체를 나중에 재사용하기위해 db.sequelize에 넣어 두었습니다.
+
+force: false는 이게 만약 true로 되어있으면 서버 실행 시마다 테이블을 재생성한다. 테이블을 잘못 만든 경우에 true로 사용하면되고 배포시 무조건 false로 배포해야한다.
