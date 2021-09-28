@@ -343,3 +343,27 @@ API주소는 같은데 메서드가 다른 라우터는 이렇게 채이닝으�
 req, res 모두 메서드 체이닝을 지원하는 경우가 많다.
 
 
+## Sequelize
+
+```javascript
+const Sequelize = require('sequelize');
+
+const env = process.env.NODE_ENV || 'development';
+
+const config = require('../config/config')[env];
+const db = {};
+
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config
+);
+
+db.sequelize = sequelize;
+
+module.exports = db;
+
+```
+
+여기에서 `Sequelize`는 시퀄라이즈 패키지이자 생성자이다. config/config.json에서 데이터베이스 설정을 불러온 후 new Sequelize를 통해 MySQL 연결 객체를 생성한다. 연결 객체를 나중에 재사용하기위해 db.sequelize에 넣어 두었습니다.
