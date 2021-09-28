@@ -76,7 +76,7 @@ npm i express@^1.1.1이라면 1.1.1 이상부터 2.0.0 미만 버전까지 설�
 
 나머지는 부등호 기호와 같다.
 
-### body-parser
+## body-parser
 
 ```javascript
 app.use(express.urlencoded({ extended: false }))
@@ -84,4 +84,27 @@ app.use(express.urlencoded({ extended: false }))
 
 false이면 노드의 `querystring` 모듈을 사용하여 쿼리스트링을 해석하고, true면 qs모듈을 사용하여 쿼리스트링을 해석한다. qs는 npm 패기키지이다.
 
+## cookie-parser
+
+cookie-parser는 요청에 동봉된 쿠키를 해석해 REQ.cookies 객체로 만들어준다.
+
+`app.use(cookieParser(비밀키));`
+
+첫번째 인수로 비밀키를 넣어줄수 있고, 서명된 쿠키가 있는 경우, 제공한 비밀 키를 통해 해당 쿠키가 내 서버가 만든 쿠키임을 검증할 수 있습니다. 쿠키는 클라이언트에서 위조하시 쉬우므로 비밀 키를 통해 만들어낸 서명을 쿠키 값 뒤에 붙입니다.
+
+서명된 쿠키는 `req.cookies`대신 `req.signedCookies` 객체에 들어가 있는다.
+
+cookie-parser가 쿠키를 생성할때 쓰이는 것은 아니다. 쿠키를 생성/제거 하기 위해서는 res.cookie, res.clearCookie 메서드를 사용해야 한다. res.cookie(키, 값, 옵션) 형식으로 사용한다.
+
+```javascript
+res.cookie('name', 'taehee', {
+  expires: new Date(Date.now() + 10000),
+  httpOnly: true,
+  secure: true
+});
+
+res.clearCookie('name', 'taehee', { httpOnly: true, secure: true });
+```
+
+쿠키를 지우려면,키와 값 외에 옵션도 정확히 일치해야 쿠키가 지워진다. 단, expires나 maxAge옵션은 일치할 필요가 없다.
 
