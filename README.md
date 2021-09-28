@@ -152,3 +152,95 @@ app.set으로 익스프레스의 데이터를 저장하면 app.get혹은 req.app
 
 반면 req객체는 요청을 보낸 사용자 개개인에게 귀속되므로 req객체를 통해 개인의 데이터를 전달하는 것이 좋습니다.
 
+## Multer
+
+```javascript
+const multer = require('multer');
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination(req, file, done) {
+      done(null, 'uploads/');
+    },
+    filename(req, file, done) {
+      const ext = path.extname(file.originalname);
+      done(null, path.basename(file.originalname, ext) + Date.now() + ext);
+    },
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+```
+
+done의 첫번째 매게변수에는 에러가 있다면 에러를 넣고, 두번째는 실제 경로 혹은 파일 이름을 넣어주면 된다.
+
+파일명 + 현재시간.확장자 형식으로 이름을 정해 넣어주고있다.
+
+폴더가 없다면 폴더를 만들어 주어야한다.
+
+```javascript
+const fs=  require('fs');
+try {
+  fs.readdirSync('uploads');
+}catch (err) {
+  console.error('uploads does not exist, So I will create directory');
+  fs.mkdirSync('uploads');
+}
+```
+
+```javascript
+app.post('/upload', upload.single('image'), (req, res) => {
+  console.log(req.file, req.body);
+  res.send('ok');
+})
+```
+
+파일을 하나만 업로드 하는 경우 single 미들웨어를 사용한다.
+
+업로드 성공 시 결과는 req.file 객체 안에 들어 있습니다. req.body에는 파일이 아닌 데이터인 title이 들어 있습니다.
+
+req.file 객체는 다음과 같이 생겼습니다
+
+```javascript
+{
+    fieldname: 'img',
+    originalname: 'nodejs.png',
+    encoding: '7bit',
+    mimetype: 'image/png',
+    destination: 'uploads/',
+    filename: 'nodejs132131231313213123.png',
+    size: 53357
+}
+```
+
+여러가지를 다운받으려면 single대신 array로 교체합니다.
+
+```javascript
+app.post('/upload', upload.array('image'), (req, res) => {
+  console.log(req.files, req.body);
+  res.send('ok');
+})
+```
+
+업로드 결과도 req.file 대신 req.files 배열에 들어 있습니다.
+
+```html
+<form id="form" action="/upload" method="post" enctype="multipart/form-data">
+  <input type="file" name="image1" />
+  <input type="file" name="image2" />
+  <input type="text" name="title" />
+  <button type="submit">업로드</button>
+</form>
+```
+
+```javascript
+app.post('/upload', upload.fields([{name: 'image1'}, {name: 'image2'}]),
+  (req, res) => {
+    console.log(req.files, req.body);
+    res.send('ok');
+  })
+```
+
+fields 미들웨어의 인수로 input 태그의 name을 각각 적습니다.
+
+업로드 결과도 req.files.image1, req.files.image2에 각각 들어 있습니다.
+
