@@ -246,3 +246,51 @@ fields 미들웨어의 인수로 input 태그의 name을 각각 적습니다.
 
 업로드 결과도 req.files.image1, req.files.image2에 각각 들어 있습니다.
 
+## 라우트 매개변수 패턴
+
+/user/:id 이렇게 들어오는 걸
+
+라우트 매개변수 패턴이라고 하며 req.params로 들어온다.
+
+이렇게 라우트 매개변수 패턴을 사용하는 라우터는 항상 일반 라우터보다 뒤에 위치해야한다. 밑에 그래야만 하는 이유를 나타내는 예제가 있다.
+
+```javascript
+router.get('/user/:id', function (req, res) {
+  console.log('얘만 실행됨')
+});
+
+router.get('/user/some-api', function (req, res) {
+  console.log('예는 실행 절대 안됨')
+})
+```
+
+다 /user/:id로 들어가버린다.
+
+## 쿼리스트링
+
+`/users/123?limit=5&skip=10`라는 요청이 들어온다면 req.params는 id에 123이 들어오고 req.query에는 limit: 5, skip: 10이 들어온다 다 문자열로 들어온다.
+
+```javascript
+const req.params = {
+  id: '123'
+}
+
+const req.query = {
+  limit: '5',
+  skip: '10'
+}
+```
+
+변수명 저렇게 쓰면 안됩니다 예를들기 위해 한것일 뿐
+
+```javascript
+router.route('/abc')
+.get((req, res) => {
+  res.send('GET /abc');
+})
+.post((req, res) => {
+  res.send('POST /abc')
+})
+```
+
+API주소는 같은데 메서드가 다른 라우터는 이렇게 채이닝으로 묶을수도 있다.
