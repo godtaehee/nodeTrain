@@ -108,3 +108,47 @@ res.clearCookie('name', 'taehee', { httpOnly: true, secure: true });
 
 쿠키를 지우려면,키와 값 외에 옵션도 정확히 일치해야 쿠키가 지워진다. 단, expires나 maxAge옵션은 일치할 필요가 없다.
 
+## express-session
+
+세션 관리용 미들웨어이며 req.session객체 안에 사용자별로 세션이 유지된다.
+
+
+```javascript
+app.use(session({
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.COOKIE_SECRET,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+  },
+  name: 'session-cookie',
+}))
+```
+
+resave: 요청이 올때 세션에 수정 사항이 생기지 않더라도 세션을 다시 저장할지 설정하는 것이다
+
+saveUninitialized: 세션에 저장할 내역이 없더라도 처음부터 세션을 생성할지 설정하는 것이다.
+
+세션 쿠키의 이름은 name 옵션으로 설정하며 기본 값은 `connect.sid`이다.
+
+```javascript
+req.session.name = 'taehee' // 세션 등록
+req.sessionID // 세션 아이디 확인
+req.session.destroy(); // 세션 모두 제거
+```
+
+express-session에서 서명한 쿠키 앞에는 s:이 붙는다. 실제로 encodeURIComponent 함수가 실행되어 `s%3A`가 된다.
+
+`s%3A`의 뒷 부분이 실제 암호화된 쿠키 내용입니다. 앞에 s%3A가 붙은 경우, 이 쿠키가 express-session 미들웨어에 의해 암호화된 것이라고 생각하면 된다.
+
+## next()
+
+next는 route라는 문자열을 넣으면 다음 라우터의 미들웨어로 바로 이동하고, 그 외의 인수를 넣는다면 바로 에러처리 미들웨어로 이동한다. 이때의 인수는 error 미들웨어의 파라미터로 가게된다.
+
+## req객체와 app.set의 차이
+
+app.set으로 익스프레스의 데이터를 저장하면 app.get혹은 req.app.get으로 어디서든지 가져올수 있지만 전역적으로 사용되는 이 값은 사용자 개개인의 값을 넣기에는 부적절하며, 앱 전체의 설정을 공유할때 사용하면된다.
+
+반면 req객체는 요청을 보낸 사용자 개개인에게 귀속되므로 req객체를 통해 개인의 데이터를 전달하는 것이 좋습니다.
+
