@@ -369,3 +369,27 @@ module.exports = db;
 여기에서 `Sequelize`는 시퀄라이즈 패키지이자 생성자이다. config/config.json에서 데이터베이스 설정을 불러온 후 new Sequelize를 통해 MySQL 연결 객체를 생성한다. 연결 객체를 나중에 재사용하기위해 db.sequelize에 넣어 두었습니다.
 
 force: false는 이게 만약 true로 되어있으면 서버 실행 시마다 테이블을 재생성한다. 테이블을 잘못 만든 경우에 true로 사용하면되고 배포시 무조건 false로 배포해야한다.
+
+Sequelize.Model 확장한 클래스로 모델을 생성한다.
+
+시퀄라이즈는 기본적으로 모델이름은 단수형으로 테이블 이름은 복수형으로 사용한다.
+
+모델은 크게 `static init`메서드와 `static associate`메서드로 나뉜다.
+
+### static init
+테이블에 대한 설정을 한다.
+
+첫번째 인수는 테이블 컬럼에 대한 설정이며, 두 번째 인수가 테이블 자체에 대한 설정이다.
+
+VARCHAR -> STRING
+
+INT -> INTEGER
+
+TINYINT -> BOOLEAN
+
+DATETIME -> DATE
+
+### static associate
+
+다른 모델과의 관계를 적는다.
+
