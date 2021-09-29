@@ -415,3 +415,124 @@ static associate(db) {
 
 sourceKey는 자기 자신의 id이다.
 
+현재 User와 Comment는 1:N관계이다.
+
+### 1:1
+
+```javascript
+db.User.hasOne(db.Info, { foreignKey: 'UserId', sourceKey:'id'})
+```
+
+```javascript
+db.Info.belongsTo(db.User, { foreignKey: 'UserId', targetKey: 'id'});
+```
+
+1:1관계에서는 hasMany 메서드 대신 hasOne 메서드를 사용한다.
+
+1:1 관계라도 belongsTo와 hasOne이 반대가 되면 안된다. belongsTo를 사용하는 Info 모델에 UserId 컬럼이 추가되기 때문이다.
+
+### N:M
+
+N:M을 표현하기 위해 belongsToMany메서드를 사용한다. Post테이블과 Hashtag모델이 있고 두개의 중간테이블이 있다고하면 다음과 같이 표현할수 있다.
+
+```javascript
+db.Post.belongsToMany(db.Hashtag, {through: 'PostHashtag'});
+
+db.Hashtag.belongsToMany(db.Post, {through: 'PostHashtag'});
+```
+
+중간테이블은 다음과 같이 접근가능하다.
+
+```javascript
+db.sequelize.models.PostHashtag
+```
+
+```javascript
+SELECT name, age FROM nodejs.users WHERE married = 1 AND age > 30;
+```
+
+이것은 아래와 같다.
+
+```javascript
+const {Op} = require('sequelize');
+const { User } = require('../models');
+User.findAll({
+  attributes: ['name', 'age'],
+  where: {
+    married: true,
+    age: { [Op.gt]: 30},
+  }
+})
+```
+
+### Op 연산자 종류
+Op.gt(초과), Op.gte(이상), Op.lt(미만), Op.lte(이하), Op.ne(같지 않음), Op.or(또는), Op.in(배열 요소 중 하나), Op.notIn(배열 요소와 모두 다름)
+
+```javascript
+SELECT id, name FROM users WHERE married = 0 OR age > 30;
+
+User.findAll({
+  attributes: ['id', 'name'],
+  where: {
+    [Op.or]: [{married: false}, {age: {[Op.gt]: 30}}],
+  }
+})
+```
+
+### 정렬
+
+```javascript
+SELECT id, name FROM users ORDER BY age DESC;
+User.findAll({
+  attributes: ['id', 'name'],
+  order: [['age', 'desc']],
+})
+```
+
+### 로우 개수 설정 (LIMIT)
+
+```javascript
+SELECT id, name FROM users ORDER BY age DESC LIMIT 1;
+
+User.findAll({
+  attributes: ['id', 'name'],
+  order: [['age', 'DESC']],
+  limit: 1,
+})
+```
+
+### OFFSET
+
+```javascript
+SELECT id, name FROM users ORDER BY age DESC LIMIT 1 OFFSET 1;
+
+User.findAll({
+  attributes: ['id', 'name'],
+  order: ['age', 'DESC'],
+  limit: 1,
+  offset: 1,
+});
+```
+
+### UPDATE
+
+```javascript
+UPDATE nodejs.users SET comment = '바꿀 내용' where id = 2;
+
+User.update({
+  comment: '바꿀 내용',
+}, {
+  where: {id:2},
+})
+```
+
+### DELETE
+
+```javascript
+DELETE FROM nodejs.users WHERE id = 2;
+
+User.destroy({
+  where: {id: 2},
+})
+```
+
