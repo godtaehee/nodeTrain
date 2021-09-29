@@ -536,3 +536,90 @@ User.destroy({
 })
 ```
 
+### JOIN
+
+```javascript
+const user = await User.findOne({
+  include: [{
+    model: Comment,
+  }]
+})
+console.log(user.Comments) // 사용자 댓글
+```
+
+include가 배열인 이유는 다양한 관계를 다른모델과 맺을수 있기 때문이다.
+
+관계를 설정했다면 getComments(조회) setComment(수정), addComment(하나 생성), addComments(여러 개 생성),removeComments(삭제) 메서드를 지원한다. 동사 뒤에 모델의 이름이 붙는 형식입니다.
+
+동사 뒤에 모델의 이름을 바꾸고싶다면
+
+```javascript
+// 관계 설정시 as로 등록
+db.User.hasMany(db.Comment, {
+  foreignKey: 'commenter',
+  sourceKey: 'id',
+  as: 'Answer'
+});
+
+// 쿼리 시
+
+const user = await User.findOne({});
+const comments = await user.getAnswer();
+console.log(comments);
+```
+
+as 설정시 include 시 추가되는 댓글 객체도 user.Answers로 바뀐다.
+
+include나 관계 쿼리 메서드에서도 where나 attributes 같은 옵션을 사용할 수 있습니다.
+
+```javascript
+const user = await User.findOne({
+  include: [{
+    model: Comment,
+    where: {
+      id: 1
+    },
+    attributes: ['id'],
+  }]
+});
+
+const comments = await user.getComments({
+  where: {
+    id: 1,
+  },
+  attributes: ['id'],
+});
+```
+
+댓글을 가져올 때는 id가 1인 댓글만 가져오고 컬럼에도 id컬럼만 가져오도록 하고 있다.
+
+조회는 저렇게 하지만 수정, 생성, 삭제 때는 조금 다른 점이 있다.
+
+### 생성
+
+```javascript
+// 한개추가
+const user = await User.findOne({});
+const comment = await Comment.create();
+await user.addComment(comment);
+await user.addComment(comment.id);
+```
+
+```javascript
+const user = await User.findOne({});
+const comment1 = await Comment.create();
+const comment2 = await Comment.create();
+await user.addComment([comment1, comment2]);
+```
+
+관계 쿼리 메서드의 인수로 추가할 댓글 모델을 넣거나 댓글의 아이디를 넣으면 된다. 수정이나 삭제도 마찬가지입니다.
+
+## 직접 쿼리하기
+
+직접 SQL 쿼리를 할수도 있다.
+
+```javascript
+const [result, metadata] = await sequelize.query('SELECT * FROM comments');
+console.log(result);
+```
+
