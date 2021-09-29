@@ -7,8 +7,8 @@ const { sequelize } = require('./models');
 
 const app = express();
 
-app.set('port', process.env.PORT || 3001);
-app.set('view engine', html);
+app.set('port', process.env.PORT || 3000);
+app.set('view engine', 'html');
 
 nunjucks.configure('views', {
   express: app,

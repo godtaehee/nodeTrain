@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +17,9 @@
     "nunjucks": "^3.2.3",
     "sequelize": "^6.6.5",
     "sequelize-cli": "^6.2.0"
+  },
+  "devDependencies": {
+    "chokidar": "^3.5.2",
+    "nodemon": "^2.0.13"
   }
 }
