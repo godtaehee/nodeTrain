@@ -393,3 +393,25 @@ DATETIME -> DATE
 
 다른 모델과의 관계를 적는다.
 
+```javascript
+// Comment
+  static associate(db) {
+    db.Comment.belongsTo(db.User, { foreignKey: 'commenter', targetKey: 'id' });
+  }
+```
+
+targetKey는 User의 id이다.
+
+foreignKey를 따로 지정하지 않는다면 이름이 모델명 기본 키인 컬럼이 모델에 생성된다.
+
+예를들어 commenter를 foreignKey로 직접 넣어주지 않았다면 user(모델명) + 기본 키(id)가 합쳐진 UserId가 foreignKey로 생성된다.
+
+```javascript
+// User
+static associate(db) {
+    db.User.hasMany(db.Comment, { foreignKey: 'commenter', sourceKey: 'id' });
+  }
+```
+
+sourceKey는 자기 자신의 id이다.
+
