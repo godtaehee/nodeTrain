@@ -9,18 +9,19 @@ import User from '../models/user';
 const router = express.Router();
 
 router.post('/join', isNotLoggedIn, async (req, res, next) => {
-  const { email, nick, pass } = req.body;
-  logger.debug(req.body);
+  const { email, nick, password } = req.body;
+  console.log();
+  logger.debug(email, nick, password);
   try {
     const exUser = await User.findOne({ where: { email } });
     if (exUser) {
       return res.redirect('/join?error=exist');
     }
-    const hash = await bcrypt.hash(pass, 12);
+    const hash = await bcrypt.hash(password, 12);
     await User.create({
       email,
       nick,
-      password: hash,
+      hash,
     });
     return res.redirect('/');
   } catch (e) {
