@@ -4,14 +4,13 @@ import express from 'express';
 import passport from 'passport';
 import bcrypt from 'bcrypt';
 import { isLoggedIn, isNotLoggedIn } from './middlewares';
+
 import User from '../models/user';
 
 const router = express.Router();
 
 router.post('/join', isNotLoggedIn, async (req, res, next) => {
   const { email, nick, password } = req.body;
-  console.log();
-  logger.debug(email, nick, password);
   try {
     const exUser = await User.findOne({ where: { email } });
     if (exUser) {
@@ -21,12 +20,12 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
     await User.create({
       email,
       nick,
-      hash,
+      password: hash,
     });
     return res.redirect('/');
-  } catch (e) {
-    console.error(e);
-    return next(e);
+  } catch (error) {
+    console.error(error);
+    return next(error);
   }
 });
 
@@ -39,6 +38,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
     if (!user) {
       return res.redirect(`/?loginError=${info.message}`);
     }
+    console.log(user);
     return req.login(user, (loginError) => {
       if (loginError) {
         console.error(loginError);
@@ -46,7 +46,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
       }
       return res.redirect('/');
     });
-  })(req, res, next);
+  })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
 });
 
 router.get('/logout', isLoggedIn, (req, res) => {

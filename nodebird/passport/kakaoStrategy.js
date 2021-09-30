@@ -1,8 +1,8 @@
-const passport = require('passport');
-const KakaoStrategy = require('passport-kakao').Strategy;
+import passport from 'passport';
+import KakaoStrategy from 'passport-kakao';
 
-const User = require('../models/user');
-module.exports = () => {
+import User from '../models/user';
+const kakaoStrategy = () => {
   passport.use(
     new KakaoStrategy(
       {
@@ -34,3 +34,5 @@ module.exports = () => {
     )
   );
 };
+
+export default kakaoStrategy;
