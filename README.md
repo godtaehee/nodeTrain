@@ -623,3 +623,148 @@ const [result, metadata] = await sequelize.query('SELECT * FROM comments');
 console.log(result);
 ```
 
+passport.initialize 미들웨어는 요청(req 객체)에 passport 설정을 심고, passport.session 메들웨어는 req.session 객체에 passport정보를 저장합니다. req.session객체는 express-session에서 생성하는 것이므로 passport 미들웨어는 express-session 미들웨어보다 뒤에 연결해야합니다.
+
+## serializeUser, deserializeUser
+
+```javascript
+const passport = require('passport');
+const local = require('./localStrategy');
+const kakao = require('./kakaoStrategy');
+const User = require('../models/user');
+
+module.exports = () => {
+  passport.serializeUser((user, done) => {
+    done(null, user.id);
+  });
+
+  passport.deserializeUser((id, done) => {
+    User.findOne({
+      where: { id },
+    })
+      .then((user) => done(null, user))
+      .catch((err) => done(err));
+  });
+};
+
+```
+
+### serializeUser
+
+로그인 시 실행되며, req.session(세션) 객체에 어떤 데이터를 저장할지 정하는 메서드입니다. 매개변수로 user를 받고 나서, done 함수에 두 번째 인수로 user.id를 넘기고 있습니다. 여기에 사용자 정보가 들어있습니다. -> 나중에설명
+
+done 함수의 첫번째 인수는 에러발생시 사용하는 것이고, 두번째 인수에는 저장하고 싶은 데이터를 넣습니다. 로그인 시 사용자 데이터를 세션에 저장하는데 세션에 사용자 정보를 모두 저장하면 세션의 용량이 커지고 데이터 일관성에 문제가 발생하므로 사용자의 아이디만 저장하라고 명령한 것이다.
+
+serialize가 로그인 시에만 실행된다면 deserializeUser는 매 요청ㅅ ㅣ 실행된다. passport.session 미들웨어가 이 메서드를 호출합니다.
+
+### 전체적인 과정
+
+#### 로그인 전
+
+1. 라우터를 통해 로그인 요청이 들어옴
+
+1. 라우터에서 passport.authenticate 메서드 호출
+
+1. 로그인 전략 수행
+
+1. 로그인 성공 시 사용자 정보 객체와 함께 req.login호출
+
+1. req.login 메서드가 passport.serializeUser호출
+
+1. req.session에 사용자 아이디만 저장
+
+1. 로그인 완료
+
+### 로그인 후
+
+1. 요청이 들어옴
+
+1. 라우터에 요청이 도달하기 전에 passport.session 미들웨어가 passport.deserializeUser 메서드 호출
+
+1. req.session에 저장된 아이디로 데이터베이스에서 사용자 조회
+
+1. 조회된 사용자 정보를 req.user에 저장
+
+1. 라우터에서 req.user 객체 사용 가능
+
+## localStrategy 와 kakaoStrategy 파일
+
+이것들은 로컬 로그인과 카카오 로그인 전략에 대한 파일이다. Passport는 로그인 시의 동작을 전략(strategy)이라는 용어로 표현하고 있습니다. 다소 거창하긴 하지만, 로그인 과정을 어떻게 처리할지 설명하는 파일이라고만 생각하면 된다.
+
+## 로컬 로그인
+
+로컬 로그인에는 passport-local모듈이 필요하다.
+
+```javascript
+router.post('/login', isNotLoggedIn, (req, res, next) => {
+  passport.authenticate('local', (authError, user, info) => {
+    if (authError) {
+      console.error(authError);
+      return next(authError);
+    }
+    if (!user) {
+      return res.redirect(`/?loginError=${info.message}`);
+    }
+    return req.login(user, (loginError) => {
+      if (loginError) {
+        console.error(loginError);
+        return next(loginError);
+      }
+      return res.redirect('/');
+    });
+  })(req, res, next);
+});
+```
+
+`passport.authenticate('local')` 이부분이 passport가 local전략을 실행한다는것이다.
+
+
+```javascript
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
+
+const User = require('../models/user');
+
+module.exports = () => {
+  passport.use(
+    new LocalStrategy(
+      {
+        usernameField: 'email',
+        passwordField: 'password',
+      },
+      async (email, password, done) => {
+        try {
+          const exUser = await User.findOne({
+            where: { email },
+          });
+          if (exUser) {
+            const result = await bcrypt.compare(password, exUser.password);
+            if (result) {
+              done(null, exUser);
+            } else {
+              done(null, false, { message: '비밀번호가 일치하지 않습니다.' });
+            }
+          } else {
+            done(null, false, { message: '가입되지 않으느 회원입니다.' });
+          }
+        } catch (e) {
+          console.error(e);
+          done(e);
+        }
+      }
+    )
+  );
+};
+
+```
+
+LocalStrategy 생성자의 첫 번째 인수로 주어진 객체는 전략에 관한 설정을 하는 곳입니다. usernameField와 passwordField에는 일치하는 로그인 라우터의 req.body 속성명을 적으면 됩니다. req.body.email에 이메일 주소가, req.body.password에 비밀번호가 담겨 들어오므로 EMail과 password를 각각 넣었습니다.
+
+실제 전략을 수행하는 async함수입니다. LocalStrategy 생성자의 두 번째 인수로 들어갑니다. 첫번째 인수에서 넣어준 이메일과 패스워드는 각각 async함수의 첫번째 두번째 매개변수가 됩니다. 세번째의 done 함수는 passport.authenticate의 콜백 함수이다.
+
+
+
+## 카카오 로그인
+
+OAUTH2를 공부해보자

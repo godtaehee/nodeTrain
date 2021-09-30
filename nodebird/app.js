@@ -1,16 +1,23 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const morgan = require('morgan');
-const path = require('path');
-const session = require('express-session');
-const nunjucks = require('nunjucks');
-const dotenv = require('dotenv');
+// config
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
+import path from 'path';
+import session from 'express-session';
+import nunjucks from 'nunjucks';
+import dotenv from 'dotenv';
+import passport from 'passport';
+import db from './models';
+import passportConfig from './passport';
 
 dotenv.config();
-const pageRouter = require('./routes/page');
-const { sequelize } = require('./models');
+
+// router
+import pageRouter from './routes/page';
+import authRouter from './routes/auth';
 
 const app = express();
+passportConfig();
 app.set('port', process.env.PORT || 8000);
 app.set('view engine', 'html');
 nunjucks.configure('views', {
@@ -35,7 +42,10 @@ app.use(
   })
 );
 
-sequelize
+app.use(passport.initialize());
+app.use(passport.session());
+
+db.sequelize
   .sync({ force: false })
   .then(() => {
     console.log('DB Connected');
@@ -44,7 +54,10 @@ sequelize
     console.error(err);
   });
 
+// Register Router
 app.use('/', pageRouter);
+app.use('/auth', authRouter);
+
 app.use(morgan());
 
 app.use((req, res, next) => {

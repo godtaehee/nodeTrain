@@ -1,9 +1,10 @@
-const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
 const env = process.env.NODE_ENV || 'development';
-const config = require('../config/config')[env];
-const User = require('./user');
-const Post = require('./post');
-const Hashtag = require('./hashtag');
+import * as configJson from '../config/config';
+const config = configJson[env];
+import User from './user';
+import Post from './post';
+import Hashtag from './hashtag';
 
 const db = {};
 
@@ -27,4 +28,4 @@ User.associate(db);
 Post.associate(db);
 Hashtag.associate(db);
 
-module.exports = db;
+export default db;

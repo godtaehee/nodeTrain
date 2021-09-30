@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = class Post extends Sequelize.Model {
+export default class Post extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
@@ -29,4 +29,4 @@ module.exports = class Post extends Sequelize.Model {
     db.Post.belongsTo(db.User);
     db.Post.belongsToMany(db.Hashtag, { through: 'PostHashtag' });
   }
-};
+}
