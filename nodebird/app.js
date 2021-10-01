@@ -15,6 +15,7 @@ dotenv.config();
 // router
 import pageRouter from './routes/page';
 import authRouter from './routes/auth';
+import postRouter from './routes/post';
 
 const app = express();
 passportConfig();
@@ -57,6 +58,7 @@ db.sequelize
 // Register Router
 app.use('/', pageRouter);
 app.use('/auth', authRouter);
+app.use('/post', postRouter);
 
 app.use(morgan());
 
