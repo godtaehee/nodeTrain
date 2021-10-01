@@ -1,3 +1,5 @@
+import { logger } from '../../nodebird/config/winston';
+
 import express from 'express';
 import passport from 'passport';
 import bcrypt from 'bcrypt';

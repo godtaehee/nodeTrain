@@ -1,4 +1,3 @@
-// config
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
@@ -7,28 +6,32 @@ import session from 'express-session';
 import nunjucks from 'nunjucks';
 import dotenv from 'dotenv';
 import passport from 'passport';
-import db from './models';
 
 dotenv.config();
-
-// router
-import pageRouter from './routes/page';
 import authRouter from './routes/auth';
-import postRouter from './routes/post';
-import userRouter from './routes/user';
+const indexRouter = require('./routes');
+import db from './models';
+import passportConfig from './passport';
 
 const app = express();
 passportConfig();
-app.set('port', process.env.PORT || 8000);
+app.set('port', process.env.PORT || 8002);
 app.set('view engine', 'html');
 nunjucks.configure('views', {
   express: app,
   watch: true,
 });
+db.sequelize
+  .sync({ force: false })
+  .then(() => {
+    console.log('데이터베이스 연결 성공');
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/img', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -43,24 +46,11 @@ app.use(
     },
   })
 );
-
 app.use(passport.initialize());
 app.use(passport.session());
 
-db.sequelize
-  .sync({ force: false })
-  .then(() => {
-    console.log('DB Connected');
-  })
-  .catch((err) => {
-    console.error(err);
-  });
-
-// Register Router
-app.use('/', pageRouter);
 app.use('/auth', authRouter);
-app.use('/post', postRouter);
-app.use('/user', userRouter);
+app.use('/', indexRouter);
 
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
@@ -76,5 +66,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(app.get('port'), () => {
-  console.log(`http://localhost:${app.get('port')}`);
+  console.log(app.get('port'), '번 포트에서 대기중');
 });
