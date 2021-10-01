@@ -18,6 +18,15 @@ services:
     volumes:
       - /usr/src/app/node_modules
       - ./nodebird-api:/usr/src/app
+  nodecat:
+    build:
+      context: nodecat
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4000:4000"
+    volumes:
+      - /usr/src/app/node_modules
+      - ./nodecat:/usr/src/app
   mysql:
     build:
       context: mysql
