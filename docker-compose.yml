@@ -2,16 +2,25 @@ version: "3"
 services:
   node:
     build:
-      context: .
+      context: nodebird
       dockerfile: Dockerfile.dev
     ports:
       - "3000:8000"
     volumes:
       - /usr/src/app/node_modules
-      - ./:/usr/src/app
+      - ./nodebird:/usr/src/app
+  node_bird_api:
+    build:
+      context: nodebird-api
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3001:8001"
+    volumes:
+      - /usr/src/app/node_modules
+      - ./nodebird-api:/usr/src/app
   mysql:
     build:
-      context: ./mysql
+      context: mysql
       dockerfile: Dockerfile.dev
     restart: unless-stopped
     ports:

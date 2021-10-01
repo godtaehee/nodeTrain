@@ -5,7 +5,7 @@ import fs from 'fs';
 
 import Post from '../models/post';
 import Hashtag from '../models/hashtag';
-import { isLoggedIn } from '../../nodebird-api/routes/middlewares';
+import { isLoggedIn } from './middlewares';
 
 const router = express.Router();
 

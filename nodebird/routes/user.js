@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { isLoggedIn } from '../../nodebird-api/routes/middlewares';
+import { isLoggedIn } from './middlewares';
 
 import User from '../models/user';
 

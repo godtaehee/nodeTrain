@@ -1,8 +1,5 @@
 import express from 'express';
-import {
-  isLoggedIn,
-  isNotLoggedIn,
-} from '../../nodebird-api/routes/middlewares';
+import { isLoggedIn, isNotLoggedIn } from './middlewares';
 import Hashtag from '../models/hashtag';
 import Post from '../models/post';
 import User from '../models/user';

@@ -3,7 +3,7 @@ import passport from 'passport';
 import bcrypt from 'bcrypt';
 import { isLoggedIn, isNotLoggedIn } from './middlewares';
 
-import User from '../../nodebird/models/user';
+import User from '../models/user';
 
 const router = express.Router();
 

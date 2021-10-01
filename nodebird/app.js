@@ -8,7 +8,7 @@ import nunjucks from 'nunjucks';
 import dotenv from 'dotenv';
 import passport from 'passport';
 import db from './models';
-
+import passportConfig from './passport';
 dotenv.config();
 
 // router
