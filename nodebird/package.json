@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --watchAll",
-    "start": "nodemon --exec babel-node app.js",
+    "start": "nodemon --exec babel-node server.js",
     "coverage": "jest --coverage --watchAll"
   },
   "keywords": [],
@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "jest": "^27.2.4",
-    "nodemon": "^2.0.13"
+    "nodemon": "^2.0.13",
+    "supertest": "^6.1.6"
   }
 }

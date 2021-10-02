@@ -3,6 +3,7 @@ import { isLoggedIn, isNotLoggedIn } from './middlewares';
 import Hashtag from '../models/hashtag';
 import Post from '../models/post';
 import User from '../models/user';
+import 'regenerator-runtime/runtime.js';
 
 const router = express.Router();
 
