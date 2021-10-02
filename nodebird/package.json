@@ -37,6 +37,7 @@
     "winston-daily-rotate-file": "^4.5.5"
   },
   "devDependencies": {
+    "artillery": "^1.7.9",
     "jest": "^27.2.4",
     "nodemon": "^2.0.13",
     "supertest": "^6.1.6"
