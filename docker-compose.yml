@@ -17,7 +17,7 @@ services:
     volumes:
       - /usr/src/app/node_modules
       - ./nodebird:/usr/src/app
-    command: [ "npm", "test" ]
+    command: [ "npm", "run", "coverage" ]
   node_bird_api:
     build:
       context: nodebird-api

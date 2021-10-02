@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --watchAll",
-    "start": "nodemon --exec babel-node app.js"
+    "start": "nodemon --exec babel-node app.js",
+    "coverage": "jest --coverage --watchAll"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +14,9 @@
   "dependencies": {
     "@babel/core": "^7.15.5",
     "@babel/node": "^7.15.4",
+    "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.15.6",
+    "@babel/runtime": "^7.15.4",
     "bcrypt": "^5.0.1",
     "chokidar": "^3.5.2",
     "cookie-parser": "^1.4.5",
@@ -27,6 +30,7 @@
     "passport": "^0.5.0",
     "passport-kakao": "^1.0.1",
     "passport-local": "^1.0.0",
+    "regenerator-runtime": "^0.13.9",
     "sequelize": "^6.6.5",
     "sequelize-cli": "^6.2.0",
     "winston": "^3.3.3",
