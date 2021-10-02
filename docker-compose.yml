@@ -9,6 +9,15 @@ services:
     volumes:
       - /usr/src/app/node_modules
       - ./nodebird:/usr/src/app
+    stdin_open: true
+  node_test:
+    build:
+      context: nodebird
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /usr/src/app/node_modules
+      - ./nodebird:/usr/src/app
+    command: [ "npm", "test" ]
   node_bird_api:
     build:
       context: nodebird-api
@@ -31,6 +40,7 @@ services:
       - ./nodecat:/usr/src/app
     depends_on:
       - "node_bird_api"
+
   mysql:
     build:
       context: mysql
