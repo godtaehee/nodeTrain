@@ -10,6 +10,7 @@ import passport from 'passport';
 dotenv.config();
 import authRouter from './routes/auth';
 const v1 = require('./routes/v1');
+import v2 from './routes/v2';
 
 import db from './models';
 import passportConfig from './passport';
@@ -52,6 +53,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 // tests
 app.use('/v1', v1);
+app.use('/v2', v2);
 app.use('/auth', authRouter);
 
 app.use((req, res, next) => {
