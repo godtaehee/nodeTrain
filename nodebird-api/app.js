@@ -13,7 +13,7 @@ const v1 = require('./routes/v1');
 
 import db from './models';
 import passportConfig from './passport';
-
+import os from 'os';
 const app = express();
 passportConfig();
 app.set('port', process.env.PORT || 8001);
@@ -30,6 +30,7 @@ db.sequelize
   .catch((err) => {
     console.error(err);
   });
+//e
 
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -49,7 +50,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
+// tests
 app.use('/v1', v1);
 app.use('/auth', authRouter);
 

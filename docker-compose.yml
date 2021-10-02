@@ -13,6 +13,8 @@ services:
     build:
       context: nodebird-api
       dockerfile: Dockerfile.dev
+    dns:
+      - 127.0.0.1
     ports:
       - "3001:8001"
     volumes:
@@ -27,6 +29,8 @@ services:
     volumes:
       - /usr/src/app/node_modules
       - ./nodecat:/usr/src/app
+    depends_on:
+      - "node_bird_api"
   mysql:
     build:
       context: mysql

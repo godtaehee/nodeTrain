@@ -15,6 +15,7 @@ nunjucks.configure('views', {
   express: app,
   watch: true,
 });
+// tests
 
 app.use(morgan('dev'));
 app.use(cookieParser(process.env.COOKIE_SECRET));
